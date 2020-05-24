@@ -133,7 +133,7 @@ pip git
 
 conda activate rltrader
 
-conda install tensorflow-gpu
+conda install tensorflow-gpu==1.15
 
 git clone https://github.com/notadamking/RLTrader
 
