@@ -26,12 +26,12 @@ class TradingEnv(gym.Env):
     viewer = None
 
     def __init__(self,
-                 data_provider: BaseDataProvider,
-                 reward_strategy: BaseRewardStrategy = IncrementalProfit,
-                 trade_strategy: BaseTradeStrategy = SimulatedTradeStrategy,
-                 initial_balance: int = 10000,
-                 commissionPercent: float = 0.25,
-                 maxSlippagePercent: float = 2.0,
+                 data_provider: BaseDataProvider,   # 数据
+                 reward_strategy: BaseRewardStrategy = IncrementalProfit,   # 奖励策略
+                 trade_strategy: BaseTradeStrategy = SimulatedTradeStrategy,     # 交易策略
+                 initial_balance: int = 10000,  # 账户初始余额
+                 commissionPercent: float = 0.25,   # 佣金比率
+                 maxSlippagePercent: float = 2.0,   # 最大回撤比率
                  **kwargs):
         super(TradingEnv, self).__init__()
 
@@ -101,7 +101,7 @@ class TradingEnv(gym.Env):
                                                                                           asset_held=self.asset_held,
                                                                                           current_price=self._current_price)
 
-        if asset_bought:
+        if asset_bought:    # 买
             self.asset_held += asset_bought
             self.balance -= purchase_cost
 
@@ -109,7 +109,7 @@ class TradingEnv(gym.Env):
                                 'amount': asset_bought,
                                 'total': purchase_cost,
                                 'type': 'buy'})
-        elif asset_sold:
+        elif asset_sold:    # 卖
             self.asset_held -= asset_sold
             self.balance += sale_revenue
 
@@ -131,13 +131,13 @@ class TradingEnv(gym.Env):
             'sale_revenue': sale_revenue,
         }, ignore_index=True)
 
-    def _done(self):
+    def _done(self):    #
         lost_90_percent_net_worth = float(self.net_worths[-1]) < (self.initial_balance / 10)
         has_next_frame = self.data_provider.has_next_ohlcv()
 
         return lost_90_percent_net_worth or not has_next_frame
 
-    def _reward(self):
+    def _reward(self):    #
         reward = self.reward_strategy.get_reward(current_step=self.current_step,
                                                  current_price=self._current_price,
                                                  observations=self.observations,
